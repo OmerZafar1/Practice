@@ -1,0 +1,53 @@
+Minimal API is a feature introduced in ASP.NET Core 6 that allows developers to create lightweight APIs with minimal setup and boilerplate code. It aims to simplify the development of APIs by reducing the amount of ceremony required to set up routing, controllers, and middleware.
+
+With minimal API, you can define API endpoints directly in the Program.cs file using a simple and intuitive syntax. This approach is particularly useful for small to medium-sized APIs where the full MVC framework might be too heavy or complex.
+
+app.MapGet("/weatherforecast", () =>
+{
+    return weatherForecasts;
+});
+
+app.MapGet("/weatherforecast/{id}", (int id) =>
+{
+    return weatherForecasts.Find(f => f.Id == id);
+});
+
+app.MapPost("/weatherforecast", (WeatherForecast forecast) =>
+{
+    forecast.Id = weatherForecasts.Count + 1;
+    weatherForecasts.Add(forecast);
+    return Results.Created($"/weatherforecast/{forecast.Id}", forecast);
+});
+
+app.MapPut("/weatherforecast/{id}", (int id, WeatherForecast forecast) =>
+{
+    var existingForecast = weatherForecasts.Find(f => f.Id == id);
+    if (existingForecast != null)
+    {
+        existingForecast.Date = forecast.Date;
+        existingForecast.TemperatureC = forecast.TemperatureC;
+        existingForecast.Summary = forecast.Summary;
+    }
+    return Results.Ok();
+});
+
+app.MapDelete("/weatherforecast/{id}", (int id) =>
+{
+    var existingForecast = weatherForecasts.Find(f => f.Id == id);
+    if (existingForecast != null)
+    {
+        weatherForecasts.Remove(existingForecast);
+    }
+    return Results.Ok();
+});
+
+app.Run();
+
+internal record WeatherForecast
+{
+    public int Id { get; set; }
+    public DateOnly Date { get; set; }
+    public int TemperatureC { get; set; }
+    public string? Summary { get; set; }
+    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+}
