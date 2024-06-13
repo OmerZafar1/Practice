@@ -1,0 +1,32 @@
+ApiController empty 
+
+
+    public class FruitsAPIController : ControllerBase
+    {
+        public List<string> fruits = new List<string>()
+        {
+            "Apple",
+            "Banana",
+            "Mango",
+            "Cherry",
+            "Grapes"
+};
+        [HttpGet]
+        public List<string> GetFruits()
+        {
+            return fruits;
+        }
+
+        [HttpGet("{index}")]
+        public ActionResult<string> GetFruitByIndex(int index)
+        {
+            // Check if the index is within the valid range
+            if (index < 0 || index >= fruits.Count)
+            {
+                return NotFound("Fruit not found");
+            }
+
+            // Return the fruit at the specified index
+            return fruits.ElementAt(index);
+        }
+    }
